@@ -1,0 +1,33 @@
+name: Weekly Storage Check
+
+on:
+  schedule:
+    # Run every Sunday at 3 AM UTC (in addition to daily cleanup in sync workflow)
+    - cron: '0 3 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  storage-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Storage Usage
+        run: |
+          response=$(curl -s -X GET "${{ secrets.VERCEL_URL }}/api/cleanup" \
+            -H "Authorization: Bearer ${{ secrets.SYNC_SECRET }}")
+
+          echo "Storage Usage: $response"
+
+          # Parse and check if we're approaching limits
+          # This is informational - actual cleanup runs daily after sync
+
+      - name: Force Cleanup if Needed
+        run: |
+          response=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.VERCEL_URL }}/api/cleanup" \
+            -H "Authorization: Bearer ${{ secrets.SYNC_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "Cleanup Response: $body"
+          echo "HTTP Code: $http_code"
