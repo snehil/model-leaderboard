@@ -79,7 +79,7 @@ export function Header() {
           {/* GitHub link */}
           <Button variant="ghost" size="icon" asChild>
             <a
-              href="https://github.com/your-username/model-leaderboard"
+              href="https://github.com/snehil/model-leaderboard"
               target="_blank"
               rel="noopener noreferrer"
             >
