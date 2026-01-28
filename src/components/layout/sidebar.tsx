@@ -157,9 +157,20 @@ export function Sidebar({ onNavigate }: SidebarProps) {
       </ScrollArea>
 
       {/* Footer */}
-      <div className="border-t p-4">
+      <div className="border-t p-4 space-y-2">
         <p className="text-xs text-muted-foreground text-center">
           Updated daily from multiple sources
+        </p>
+        <p className="text-xs text-muted-foreground text-center">
+          Created by{" "}
+          <a
+            href="https://github.com/snehil"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium hover:text-foreground transition-colors"
+          >
+            Snehil Wakchaure
+          </a>
         </p>
       </div>
     </div>

@@ -140,6 +140,10 @@ See [DEVELOPERS.md](./DEVELOPERS.md) for development guidelines.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Author
+
+Created by [Snehil Wakchaure](https://github.com/snehil)
+
 ## Acknowledgments
 
 - Benchmark data from the open research community
