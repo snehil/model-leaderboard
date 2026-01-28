@@ -71,7 +71,9 @@ export default function RootLayout({
             </aside>
             {/* Main Content */}
             <main className="flex-1 md:pl-64">
-              <div className="container py-6">{children}</div>
+              <div className="container py-6 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                {children}
+              </div>
             </main>
           </div>
         </div>

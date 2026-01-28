@@ -4,20 +4,26 @@
 
 Track and compare AI model benchmarks across LLMs, vision, code, multimodal, audio, and more. Updated daily from HuggingFace, Papers with Code, and official sources.
 
-![Next.js](https://img.shields.io/badge/Next.js-15-black)
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+## Live Demo
+
+**Production:** [model-leaderboard.vercel.app](https://model-leaderboard.vercel.app)
+
+**Status:** [snehil.github.io/model-leaderboard](https://snehil.github.io/model-leaderboard)
 
 ## Features
 
 - **Comprehensive Leaderboards** - Global and per-category rankings across all major benchmarks
 - **Model Details** - View specifications, benchmark scores, and external links for every model
 - **Benchmark Info** - Tooltips and modals explaining what each benchmark evaluates
-- **Daily Updates** - Automated data pipelines pull latest results from multiple sources
+- **Trends & Analytics** - Track ecosystem trends, model distribution, and benchmark saturation
 - **Search & Filters** - Find models by name, type, organization, or license
-- **Model Comparison** - Compare up to 5 models side-by-side with radar charts
-- **Historical Trends** - Track how models improve over time
+- **Model Comparison** - Compare models side-by-side (coming soon: radar charts)
+- **Organizations** - Browse AI organizations and their model portfolios
 
 ## Quick Start
 
@@ -31,7 +37,7 @@ Track and compare AI model benchmarks across LLMs, vision, code, multimodal, aud
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/model-leaderboard.git
+git clone https://github.com/snehil/model-leaderboard.git
 cd model-leaderboard
 
 # Install dependencies
@@ -44,9 +50,8 @@ cp .env.example .env.local
 # Push database schema
 npm run db:push
 
-# Seed the database (optional)
-curl -X POST http://localhost:3000/api/seed \
-  -H "Authorization: Bearer YOUR_SYNC_SECRET"
+# Seed the database
+npx tsx src/lib/db/seed/run-seed.ts
 
 # Start development server
 npm run dev
@@ -69,6 +74,10 @@ src/
 ├── app/                    # Next.js App Router pages
 │   ├── leaderboard/       # Leaderboard pages
 │   ├── models/            # Model detail pages
+│   ├── benchmarks/        # Benchmark browsing
+│   ├── organizations/     # Organization directory
+│   ├── compare/           # Model comparison
+│   ├── trends/            # Analytics and trends
 │   └── api/               # API routes
 ├── components/
 │   ├── ui/                # shadcn/ui components
@@ -98,12 +107,26 @@ npm run db:studio    # Open Drizzle Studio
 
 ## Tech Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org) with App Router
+- **Framework**: [Next.js 16](https://nextjs.org) with App Router
 - **Language**: [TypeScript](https://www.typescriptlang.org)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com) + [shadcn/ui](https://ui.shadcn.com)
 - **Database**: [Neon](https://neon.tech) (Serverless PostgreSQL) + [Drizzle ORM](https://orm.drizzle.team)
-- **State**: [Zustand](https://zustand-demo.pmnd.rs) + [React Query](https://tanstack.com/query)
+- **State**: [Zustand](https://zustand-demo.pmnd.rs)
 - **Charts**: [Recharts](https://recharts.org)
+
+## Pages
+
+| Route | Description |
+|-------|-------------|
+| `/` | Homepage with overview |
+| `/leaderboard` | Overall model rankings |
+| `/leaderboard/[category]` | Category-specific leaderboards |
+| `/models` | Browse all tracked models |
+| `/models/[slug]` | Individual model details |
+| `/benchmarks` | Browse all benchmarks |
+| `/organizations` | Organization directory |
+| `/compare` | Model comparison tool |
+| `/trends` | Analytics and insights |
 
 ## API Routes
 
@@ -112,8 +135,7 @@ npm run db:studio    # Open Drizzle Studio
 | `/api/seed` | POST | Seed database with initial data |
 | `/api/cleanup` | POST | Run data cleanup |
 | `/api/cleanup` | GET | Check storage usage |
-
-All API routes require the `SYNC_SECRET` for authentication.
+| `/api/health` | GET | Database health check |
 
 ## Data Sources
 

@@ -4,14 +4,18 @@ AI Model Benchmark Tracking Platform - The single source of truth for AI model p
 
 ## Project Overview
 
-This is a Next.js 15 application that tracks AI model benchmarks across all categories (LLMs, vision, code, multimodal, audio, etc.). It aggregates data from multiple sources and provides a comprehensive leaderboard with search, filtering, and comparison features.
+This is a Next.js 16 application that tracks AI model benchmarks across all categories (LLMs, vision, code, multimodal, audio, etc.). It aggregates data from multiple sources and provides a comprehensive leaderboard with search, filtering, and comparison features.
+
+**Live Site:** https://model-leaderboard.vercel.app
+**Status Page:** https://snehil.github.io/model-leaderboard
+**Repository:** https://github.com/snehil/model-leaderboard
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 (App Router) + TypeScript
+- **Framework**: Next.js 16 (App Router) + TypeScript
 - **Styling**: Tailwind CSS v4 + shadcn/ui
 - **Database**: Neon (Serverless PostgreSQL) + Drizzle ORM
-- **State Management**: Zustand (UI state) + React Query (server state)
+- **State Management**: Zustand (UI state)
 - **Charts**: Recharts
 - **Testing**: Vitest + Testing Library
 - **Hosting**: Vercel
@@ -22,53 +26,49 @@ This is a Next.js 15 application that tracks AI model benchmarks across all cate
 ```
 src/
 ├── app/                    # Next.js App Router pages
-│   ├── leaderboard/       # Leaderboard routes
-│   │   ├── page.tsx       # Main leaderboard (overall rankings)
-│   │   └── [category]/    # Category-specific leaderboards
-│   ├── models/            # Model routes
-│   │   ├── page.tsx       # Models list
-│   │   └── [slug]/        # Model detail page
-│   └── api/               # API routes (seed, cleanup, sync)
+│   ├── leaderboard/       # Leaderboard (global + category)
+│   ├── models/            # Model list and detail pages
+│   ├── benchmarks/        # Benchmark browsing
+│   ├── organizations/     # Organization directory
+│   ├── compare/           # Model comparison tool
+│   ├── trends/            # Analytics and insights
+│   └── api/               # API routes (seed, cleanup, health)
 ├── components/
 │   ├── ui/                # shadcn/ui primitives
 │   ├── layout/            # Header, Sidebar
-│   ├── leaderboard/       # LeaderboardTable component
-│   ├── benchmark/         # BenchmarkInfoTooltip, BenchmarkInfoModal
-│   ├── model/             # Model cards and details
-│   └── compare/           # Comparison tool
+│   ├── leaderboard/       # Leaderboard table component
+│   └── benchmark/         # Benchmark info tooltip/modal
 ├── lib/
 │   ├── db/                # Drizzle schema, client, seed data
-│   │   ├── schema.ts      # Database schema
-│   │   ├── index.ts       # Database client
-│   │   └── seed/          # Seed data files
-│   ├── api/               # Server-side query functions
-│   │   └── queries.ts     # All database queries
-│   ├── security/          # Rate limiting, validation, API wrappers
-│   └── sync/              # Data sync services
-├── stores/                # Zustand stores (filter-store.ts)
-├── hooks/                 # React hooks
-└── types/                 # TypeScript types (index.ts)
+│   ├── api/               # Query functions
+│   └── security/          # Rate limiting, validation
+├── stores/                # Zustand stores
+├── hooks/                 # Custom React hooks
+└── types/                 # TypeScript types
 ```
 
 ## Key Files
 
 - `src/lib/db/schema.ts` - Database schema (models, benchmarks, results)
-- `src/lib/api/queries.ts` - All database query functions
-- `src/components/leaderboard/leaderboard-table.tsx` - Main leaderboard table
+- `src/lib/api/queries.ts` - Database query functions
+- `src/components/leaderboard/leaderboard-table.tsx` - Main leaderboard component
 - `src/components/benchmark/benchmark-info-modal.tsx` - Benchmark description modal
-- `src/components/benchmark/benchmark-info-tooltip.tsx` - Benchmark hover tooltip
 - `src/stores/filter-store.ts` - Filter state management
-- `src/components/ui/last-updated.tsx` - Timestamp component for data freshness
+- `src/proxy.ts` - Security proxy (request filtering)
 
 ## Pages
 
-| Route | Component | Description |
-|-------|-----------|-------------|
-| `/` | `page.tsx` | Home page with hero and category cards |
-| `/leaderboard` | `leaderboard/page.tsx` | Overall rankings + category navigation |
-| `/leaderboard/[category]` | `leaderboard/[category]/page.tsx` | Category-specific rankings |
-| `/models` | `models/page.tsx` | Browse all models by organization |
-| `/models/[slug]` | `models/[slug]/page.tsx` | Model detail with specs and scores |
+| Route | Description |
+|-------|-------------|
+| `/` | Homepage with hero and category cards |
+| `/leaderboard` | Overall model rankings |
+| `/leaderboard/[category]` | Category-specific rankings (llm, code, vision, etc.) |
+| `/models` | Browse all tracked models |
+| `/models/[slug]` | Individual model detail page |
+| `/benchmarks` | All benchmarks grouped by category |
+| `/organizations` | Organization directory |
+| `/compare` | Model comparison tool |
+| `/trends` | Analytics and ecosystem insights |
 
 ## Database
 
@@ -78,6 +78,17 @@ Uses Neon (serverless PostgreSQL) with Drizzle ORM. Key tables:
 - `benchmark_categories` - Categories (LLM, Vision, Code, etc.)
 - `benchmarks` - Individual benchmarks with descriptions and methodology
 - `benchmark_results` - Model scores on benchmarks
+
+### Seeding the Database
+
+```bash
+# Local development (recommended)
+npx tsx src/lib/db/seed/run-seed.ts
+
+# Via API (requires SYNC_SECRET)
+curl -X POST http://localhost:3000/api/seed \
+  -H "Authorization: Bearer YOUR_SYNC_SECRET"
+```
 
 ### Free Tier Strategy (Neon 0.5 GB limit)
 
@@ -91,17 +102,13 @@ Uses Neon (serverless PostgreSQL) with Drizzle ORM. Key tables:
 - Sync logs: 7 days (older auto-deleted)
 - Weekly cleanup via GitHub Actions
 
-**Cleanup API:**
-- `POST /api/cleanup` - Run full cleanup
-- `GET /api/cleanup` - Check storage usage
-
 ## Commands
 
 ```bash
 npm run dev          # Start dev server
 npm run build        # Build for production
-npm run lint         # Run ESLint
 npm run test         # Run tests
+npm run lint         # Run ESLint
 npm run db:generate  # Generate Drizzle migrations
 npm run db:push      # Push schema to database
 npm run db:studio    # Open Drizzle Studio
@@ -116,6 +123,24 @@ Optional:
 - `SYNC_SECRET` - Secret for sync API endpoints
 - `HUGGINGFACE_TOKEN` - HuggingFace API token for data sync
 
+## API Routes
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/seed` | POST | Seed database with initial data |
+| `/api/cleanup` | POST | Run data cleanup |
+| `/api/cleanup` | GET | Check storage usage |
+| `/api/health` | GET | Database health check |
+
+## Key Features
+
+1. **Leaderboards** - Global and per-category rankings with benchmark tabs
+2. **Model Pages** - Detailed model info with all benchmark scores
+3. **Benchmark Info** - Hover tooltips and click modals explaining benchmarks
+4. **Trends** - Ecosystem analytics, model distribution, benchmark saturation
+5. **Organizations** - Browse AI organizations and their models
+6. **Comparison** - Compare models side-by-side (radar charts coming soon)
+
 ## Data Sources
 
 The app pulls benchmark data from:
@@ -125,17 +150,6 @@ The app pulls benchmark data from:
 4. Official model announcements
 
 Data is synced daily via GitHub Actions.
-
-## Key Features
-
-1. **Leaderboards** - Global and per-category rankings with tabs for each benchmark
-2. **Model Pages** - Detailed model info with all benchmark scores grouped by category
-3. **Benchmark Info** - Hover tooltips and click modals explaining what each benchmark evaluates
-4. **Last Updated** - Timestamp showing when data was last refreshed
-5. **Search** - Global search with Cmd+K command palette (TODO)
-6. **Filters** - Filter by model type, organization, license
-7. **Comparison** - Compare 2-5 models side-by-side (TODO)
-8. **Historical Trends** - Track improvement over time (TODO)
 
 ## Components
 
@@ -162,25 +176,7 @@ Shows on click:
 - Scoring details
 - Links to paper, website, dataset
 
-### LastUpdated
-Shows timestamp of when data was last refreshed (renders server time).
-
 ## Security (OWASP Compliant)
-
-### OWASP Top 10 Protections
-
-| Vulnerability | Protection |
-|--------------|------------|
-| Injection | Parameterized queries (Drizzle ORM), Zod validation |
-| Broken Auth | Secure token comparison, constant-time checks |
-| Sensitive Data | HTTPS only, security headers, no stack traces |
-| XXE | JSON only, no XML parsing |
-| Broken Access | Auth middleware, rate limiting |
-| Security Misconfig | Strict CSP, security headers in next.config.ts |
-| XSS | React escaping, CSP, input sanitization |
-| Insecure Deser | Zod validation on all inputs |
-| Vulnerable Components | Regular `npm audit` |
-| Insufficient Logging | Console logging (enhance for production) |
 
 ### Security Headers (next.config.ts)
 - `X-Frame-Options: DENY` - Prevents clickjacking
@@ -204,15 +200,15 @@ Shows timestamp of when data was last refreshed (renders server time).
 - `src/lib/security/rate-limit.ts` - Rate limiting
 - `src/lib/security/validation.ts` - Zod schemas
 - `src/lib/security/api.ts` - API security middleware
-- `src/middleware.ts` - Global request filtering
+- `src/proxy.ts` - Global request filtering
 
 ## Development Notes
 
 - Use Server Components by default, Client Components only when needed
 - Add `export const dynamic = 'force-dynamic'` to pages with database queries
+- Use Suspense boundaries with Skeleton components for loading states
 - All benchmark info (description, methodology, links) stored in database
 - Filter state persisted in localStorage via Zustand
-- External links (HuggingFace, GitHub, papers) displayed non-obtrusively
+- External links displayed non-obtrusively
 - All API routes should use `withSecurity()` wrapper
 - Never expose stack traces in production errors
-- Use Suspense boundaries with Skeleton components for loading states

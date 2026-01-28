@@ -25,7 +25,7 @@ This guide covers development setup, architecture decisions, and best practices 
 
 ```bash
 # Clone and install
-git clone https://github.com/your-username/model-leaderboard.git
+git clone https://github.com/snehil/model-leaderboard.git
 cd model-leaderboard
 npm install
 

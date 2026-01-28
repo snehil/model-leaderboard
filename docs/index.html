@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Leaderboard - Status</title>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --card-bg: #141414;
+            --border: #262626;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --success: #22c55e;
+            --warning: #eab308;
+            --error: #ef4444;
+            --primary: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo svg {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .status-overview {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .status-badge.operational {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.degraded {
+            background: rgba(234, 179, 8, 0.1);
+            color: var(--warning);
+        }
+
+        .status-badge.down {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-indicator.operational {
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.degraded {
+            background: var(--warning);
+        }
+
+        .status-indicator.down {
+            background: var(--error);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .last-checked {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .services {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .service-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .service-name svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        .service-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .service-status.operational {
+            color: var(--success);
+        }
+
+        .service-status.degraded {
+            color: var(--warning);
+        }
+
+        .service-status.down {
+            color: var(--error);
+        }
+
+        .service-url {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .service-url a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .service-url a:hover {
+            text-decoration: underline;
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .links a:hover {
+            color: var(--text);
+        }
+
+        .links svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        #loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" x2="18" y1="20" y2="10"></line>
+                    <line x1="12" x2="12" y1="20" y2="4"></line>
+                    <line x1="6" x2="6" y1="20" y2="14"></line>
+                </svg>
+                <h1>Model Leaderboard</h1>
+            </div>
+            <p class="subtitle">System Status</p>
+        </header>
+
+        <div class="status-overview">
+            <div class="status-header">
+                <div class="status-badge operational" id="overall-status">
+                    <span class="status-indicator operational"></span>
+                    <span id="overall-text">Checking...</span>
+                </div>
+                <span class="last-checked">Last checked: <span id="last-checked">--</span></span>
+            </div>
+        </div>
+
+        <div class="services">
+            <div class="service-card">
+                <div class="service-header">
+                    <span class="service-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"></path>
+                            <path d="M7 7h.01"></path>
+                        </svg>
+                        Website
+                    </span>
+                    <span class="service-status" id="website-status">
+                        <span class="status-indicator"></span>
+                        <span>Checking...</span>
+                    </span>
+                </div>
+                <p class="service-url">
+                    <a href="https://model-leaderboard.vercel.app" target="_blank">model-leaderboard.vercel.app</a>
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <span class="service-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                            <path d="M3 5V19A9 3 0 0 0 21 19V5"></path>
+                            <path d="M3 12A9 3 0 0 0 21 12"></path>
+                        </svg>
+                        Database
+                    </span>
+                    <span class="service-status" id="db-status">
+                        <span class="status-indicator"></span>
+                        <span>Checking...</span>
+                    </span>
+                </div>
+                <p class="service-url">Neon PostgreSQL (serverless)</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-header">
+                    <span class="service-name">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                        API
+                    </span>
+                    <span class="service-status" id="api-status">
+                        <span class="status-indicator"></span>
+                        <span>Checking...</span>
+                    </span>
+                </div>
+                <p class="service-url">
+                    <a href="https://model-leaderboard.vercel.app/api/health" target="_blank">Health endpoint</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="links">
+            <a href="https://model-leaderboard.vercel.app" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" x2="21" y1="14" y2="3"></line>
+                </svg>
+                Visit Site
+            </a>
+            <a href="https://github.com/snehil/model-leaderboard" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path>
+                    <path d="M9 18c-4.51 2-5-2-7-2"></path>
+                </svg>
+                GitHub
+            </a>
+        </div>
+
+        <footer>
+            Created by <a href="https://github.com/snehil">Snehil Wakchaure</a>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = 'https://model-leaderboard.vercel.app';
+
+        function updateStatus(elementId, status, text) {
+            const el = document.getElementById(elementId);
+            const indicator = el.querySelector('.status-indicator');
+            const textEl = el.querySelector('span:last-child') || el;
+
+            // Remove all status classes
+            el.classList.remove('operational', 'degraded', 'down');
+            if (indicator) {
+                indicator.classList.remove('operational', 'degraded', 'down');
+            }
+
+            // Add new status class
+            el.classList.add(status);
+            if (indicator) {
+                indicator.classList.add(status);
+            }
+
+            if (textEl.tagName === 'SPAN') {
+                textEl.textContent = text;
+            }
+        }
+
+        function updateOverallStatus(allOperational) {
+            const badge = document.getElementById('overall-status');
+            const text = document.getElementById('overall-text');
+            const indicator = badge.querySelector('.status-indicator');
+
+            badge.classList.remove('operational', 'degraded', 'down');
+            indicator.classList.remove('operational', 'degraded', 'down');
+
+            if (allOperational) {
+                badge.classList.add('operational');
+                indicator.classList.add('operational');
+                text.textContent = 'All Systems Operational';
+            } else {
+                badge.classList.add('degraded');
+                indicator.classList.add('degraded');
+                text.textContent = 'Some Systems Degraded';
+            }
+        }
+
+        async function checkStatus() {
+            let allOperational = true;
+
+            // Check website
+            try {
+                const response = await fetch(API_BASE, { method: 'HEAD', mode: 'no-cors' });
+                updateStatus('website-status', 'operational', 'Operational');
+            } catch (e) {
+                updateStatus('website-status', 'down', 'Down');
+                allOperational = false;
+            }
+
+            // Check API health
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'ok') {
+                        updateStatus('api-status', 'operational', 'Operational');
+                        updateStatus('db-status', 'operational', `Operational (${data.counts?.models || 0} models)`);
+                    } else {
+                        updateStatus('api-status', 'degraded', 'Degraded');
+                        updateStatus('db-status', 'down', data.error || 'Error');
+                        allOperational = false;
+                    }
+                } else {
+                    updateStatus('api-status', 'down', 'Down');
+                    updateStatus('db-status', 'down', 'Unknown');
+                    allOperational = false;
+                }
+            } catch (e) {
+                updateStatus('api-status', 'down', 'Down');
+                updateStatus('db-status', 'down', 'Unknown');
+                allOperational = false;
+            }
+
+            updateOverallStatus(allOperational);
+            document.getElementById('last-checked').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Check status on load
+        checkStatus();
+
+        // Refresh every 60 seconds
+        setInterval(checkStatus, 60000);
+    </script>
+</body>
+</html>
