@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { benchmarkCategories, models, benchmarks } from "@/lib/db/schema";
-import { sql } from "drizzle-orm";
 
-export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
