@@ -4,6 +4,19 @@ import type { NewModel } from "../schema";
 export const models: Record<string, Omit<NewModel, "organizationId">[]> = {
   openai: [
     {
+      name: "GPT-5",
+      slug: "gpt-5",
+      modelType: "multimodal",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 256000,
+      apiUrl: "https://platform.openai.com/docs/models/gpt-5",
+      documentationUrl: "https://platform.openai.com/docs/models",
+      description:
+        "OpenAI's latest frontier model with enhanced reasoning and multimodal capabilities.",
+      architecture: "Transformer",
+    },
+    {
       name: "GPT-4o",
       slug: "gpt-4o",
       modelType: "multimodal",
@@ -39,8 +52,46 @@ export const models: Record<string, Omit<NewModel, "organizationId">[]> = {
         "Reasoning model trained with reinforcement learning for complex problem-solving.",
       architecture: "Transformer",
     },
+    {
+      name: "o3",
+      slug: "o3",
+      modelType: "reasoning",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 200000,
+      apiUrl: "https://platform.openai.com/docs/models/o3",
+      description:
+        "OpenAI's most advanced reasoning model with breakthrough performance on complex tasks.",
+      architecture: "Transformer",
+    },
   ],
   anthropic: [
+    {
+      name: "Claude Opus 4.5",
+      slug: "claude-opus-4-5",
+      modelType: "multimodal",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 200000,
+      apiUrl: "https://docs.anthropic.com/en/docs/models",
+      documentationUrl: "https://docs.anthropic.com/",
+      description:
+        "Anthropic's most capable model with exceptional reasoning, coding, and creative abilities.",
+      architecture: "Transformer",
+    },
+    {
+      name: "Claude Sonnet 4",
+      slug: "claude-sonnet-4",
+      modelType: "multimodal",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 200000,
+      apiUrl: "https://docs.anthropic.com/en/docs/models",
+      documentationUrl: "https://docs.anthropic.com/",
+      description:
+        "Balanced performance and efficiency, excellent at coding and analysis.",
+      architecture: "Transformer",
+    },
     {
       name: "Claude 3.5 Sonnet",
       slug: "claude-3-5-sonnet",
@@ -51,7 +102,7 @@ export const models: Record<string, Omit<NewModel, "organizationId">[]> = {
       apiUrl: "https://docs.anthropic.com/en/docs/models/claude-3-5-sonnet",
       documentationUrl: "https://docs.anthropic.com/",
       description:
-        "Anthropic's most intelligent model, excellent at coding and complex reasoning.",
+        "Anthropic's previous generation high-performance model.",
       architecture: "Transformer",
     },
     {
@@ -78,6 +129,30 @@ export const models: Record<string, Omit<NewModel, "organizationId">[]> = {
     },
   ],
   "google-deepmind": [
+    {
+      name: "Gemini 2.5 Pro",
+      slug: "gemini-2-5-pro",
+      modelType: "multimodal",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 1000000,
+      apiUrl: "https://ai.google.dev/gemini-api/docs/models/gemini",
+      description:
+        "Google's most capable model with enhanced reasoning and coding abilities.",
+      architecture: "Transformer (MoE)",
+    },
+    {
+      name: "Gemini 2.5 Flash",
+      slug: "gemini-2-5-flash",
+      modelType: "multimodal",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 1000000,
+      apiUrl: "https://ai.google.dev/gemini-api/docs/models/gemini",
+      description:
+        "Fast and efficient model with excellent speed-to-quality ratio.",
+      architecture: "Transformer (MoE)",
+    },
     {
       name: "Gemini 2.0 Flash",
       slug: "gemini-2-flash",
@@ -217,6 +292,28 @@ export const models: Record<string, Omit<NewModel, "organizationId">[]> = {
   ],
   alibaba: [
     {
+      name: "Qwen3 235B",
+      slug: "qwen3-235b",
+      modelType: "llm",
+      licenseType: "open_weights",
+      parameters: "235B",
+      contextLength: 128000,
+      huggingfaceUrl: "https://huggingface.co/Qwen/Qwen3-235B",
+      description: "Alibaba's largest and most capable open-weights model with frontier performance.",
+      architecture: "Transformer (MoE)",
+    },
+    {
+      name: "Qwen3 72B",
+      slug: "qwen3-72b",
+      modelType: "llm",
+      licenseType: "open_weights",
+      parameters: "72B",
+      contextLength: 128000,
+      huggingfaceUrl: "https://huggingface.co/Qwen/Qwen3-72B",
+      description: "High-performance open-weights model suitable for most tasks.",
+      architecture: "Transformer",
+    },
+    {
       name: "Qwen2.5 72B",
       slug: "qwen-2-5-72b",
       modelType: "llm",
@@ -224,7 +321,7 @@ export const models: Record<string, Omit<NewModel, "organizationId">[]> = {
       parameters: "72B",
       contextLength: 128000,
       huggingfaceUrl: "https://huggingface.co/Qwen/Qwen2.5-72B",
-      description: "Alibaba's largest open-weights language model.",
+      description: "Alibaba's previous generation large language model.",
       architecture: "Transformer",
     },
     {
@@ -236,6 +333,43 @@ export const models: Record<string, Omit<NewModel, "organizationId">[]> = {
       contextLength: 32000,
       huggingfaceUrl: "https://huggingface.co/Qwen/Qwen2-VL-72B",
       description: "Vision-language model with strong multimodal capabilities.",
+      architecture: "Transformer",
+    },
+  ],
+  moonshot: [
+    {
+      name: "Kimi K2",
+      slug: "kimi-k2",
+      modelType: "llm",
+      licenseType: "open_weights",
+      parameters: "1T (MoE)",
+      contextLength: 128000,
+      huggingfaceUrl: "https://huggingface.co/moonshotai/Kimi-K2-Instruct",
+      description: "Moonshot's frontier MoE model with excellent reasoning and coding abilities.",
+      architecture: "Transformer (MoE)",
+    },
+    {
+      name: "Kimi K1.5",
+      slug: "kimi-k1-5",
+      modelType: "reasoning",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 128000,
+      apiUrl: "https://platform.moonshot.cn",
+      description: "Reasoning model with strong performance on complex tasks.",
+      architecture: "Transformer",
+    },
+  ],
+  bytedance: [
+    {
+      name: "Doubao Pro",
+      slug: "doubao-pro",
+      modelType: "llm",
+      licenseType: "proprietary",
+      parameters: "Unknown",
+      contextLength: 128000,
+      apiUrl: "https://www.volcengine.com/product/doubao",
+      description: "ByteDance's flagship large language model.",
       architecture: "Transformer",
     },
   ],

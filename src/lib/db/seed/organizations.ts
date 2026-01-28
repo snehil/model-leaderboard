@@ -113,4 +113,18 @@ export const organizations: NewOrganization[] = [
     description:
       "GPU maker and AI infrastructure provider, creator of Nemotron.",
   },
+  {
+    name: "Moonshot AI",
+    slug: "moonshot",
+    website: "https://moonshot.cn",
+    description:
+      "Chinese AI company, creator of Kimi models with long context capabilities.",
+  },
+  {
+    name: "ByteDance",
+    slug: "bytedance",
+    website: "https://bytedance.com",
+    description:
+      "Chinese tech giant, creator of Doubao and Seed models.",
+  },
 ];
