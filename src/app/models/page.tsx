@@ -17,10 +17,11 @@ export const metadata = {
 };
 
 async function ModelsContent() {
-  const [models, organizations] = await Promise.all([
-    getModels(),
-    getOrganizations(),
-  ]);
+  try {
+    const [models, organizations] = await Promise.all([
+      getModels(),
+      getOrganizations(),
+    ]);
 
   // Group models by organization
   const modelsByOrg = models.reduce(
@@ -171,6 +172,29 @@ async function ModelsContent() {
       </div>
     </div>
   );
+  } catch (error) {
+    console.error("Failed to load models:", error);
+    return (
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Box className="h-8 w-8 text-primary" />
+            Models
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Browse AI models from various organizations
+          </p>
+        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">
+              Unable to load models data. Please check database connection.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 }
 
 function ModelsSkeleton() {

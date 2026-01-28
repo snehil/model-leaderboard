@@ -23,21 +23,22 @@ export const metadata = {
 };
 
 async function LeaderboardContent() {
-  const [categories, benchmarks, leaderboard] = await Promise.all([
-    getCategories(),
-    getBenchmarks(),
-    getOverallLeaderboard(undefined, 20),
-  ]);
+  try {
+    const [categories, benchmarks, leaderboard] = await Promise.all([
+      getCategories(),
+      getBenchmarks(),
+      getOverallLeaderboard(undefined, 20),
+    ]);
 
-  // Map leaderboard to LeaderboardEntry format
-  const entries = leaderboard.map((item) => ({
-    rank: item.rank,
-    model: item.model,
-    score: Number(item.avgScore) * 100, // Convert normalized to percentage
-    scoreNormalized: Number(item.avgScore),
-    evaluationDate: null,
-    sourceType: "official" as const,
-  }));
+    // Map leaderboard to LeaderboardEntry format
+    const entries = leaderboard.map((item) => ({
+      rank: item.rank,
+      model: item.model,
+      score: Number(item.avgScore) * 100, // Convert normalized to percentage
+      scoreNormalized: Number(item.avgScore),
+      evaluationDate: null,
+      sourceType: "official" as const,
+    }));
 
   return (
     <div className="space-y-8">
@@ -143,6 +144,29 @@ async function LeaderboardContent() {
       </div>
     </div>
   );
+  } catch (error) {
+    console.error("Failed to load leaderboard:", error);
+    return (
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Trophy className="h-8 w-8 text-primary" />
+            Leaderboard
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Top AI models ranked by average performance across all benchmarks
+          </p>
+        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">
+              Unable to load leaderboard data. Please check database connection.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 }
 
 function LeaderboardSkeleton() {

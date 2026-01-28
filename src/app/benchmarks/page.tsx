@@ -15,10 +15,11 @@ export const metadata = {
 };
 
 async function BenchmarksContent() {
-  const [categories, benchmarks] = await Promise.all([
-    getCategories(),
-    getBenchmarks(),
-  ]);
+  try {
+    const [categories, benchmarks] = await Promise.all([
+      getCategories(),
+      getBenchmarks(),
+    ]);
 
   // Group benchmarks by category
   const benchmarksByCategory = benchmarks.reduce(
@@ -165,6 +166,29 @@ async function BenchmarksContent() {
       </div>
     </div>
   );
+  } catch (error) {
+    console.error("Failed to load benchmarks:", error);
+    return (
+      <div className="space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Layers className="h-8 w-8 text-primary" />
+            Benchmarks
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Explore AI benchmarks tracked in the leaderboard
+          </p>
+        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">
+              Unable to load benchmarks data. Please check database connection.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 }
 
 function BenchmarksSkeleton() {
